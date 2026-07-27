@@ -45,20 +45,13 @@ contract WalletRegistryTest is Test {
 
         registry.registerWallet(WalletRegistry.Category.Test, "User Wallet");
 
-        WalletRegistry.WalletInfo memory userInfo = registry.getWalletInfo(
-            user
-        );
+        WalletRegistry.WalletInfo memory userInfo = registry.getWalletInfo(user);
 
-        WalletRegistry.WalletInfo memory otherInfo = registry.getWalletInfo(
-            secondUser
-        );
+        WalletRegistry.WalletInfo memory otherInfo = registry.getWalletInfo(secondUser);
 
         assertTrue(userInfo.exists);
         assertEq(userInfo.label, "User Wallet");
-        assertEq(
-            uint256(userInfo.category),
-            uint256(WalletRegistry.Category.Test)
-        );
+        assertEq(uint256(userInfo.category), uint256(WalletRegistry.Category.Test));
 
         assertFalse(otherInfo.exists);
         assertEq(otherInfo.label, "");
@@ -74,13 +67,8 @@ contract WalletRegistryTest is Test {
         assertTrue(info.exists);
     }
 
-    function test_GetWalletInfoReturnsDefaultsForUnregisteredWallet()
-        public
-        view
-    {
-        WalletRegistry.WalletInfo memory info = registry.getWalletInfo(
-            unregisteredUser
-        );
+    function test_GetWalletInfoReturnsDefaultsForUnregisteredWallet() public view {
+        WalletRegistry.WalletInfo memory info = registry.getWalletInfo(unregisteredUser);
         assertEq(uint256(info.category), uint256(WalletRegistry.Category.None));
         assertEq(info.label, "");
         assertFalse(info.exists);
@@ -91,21 +79,12 @@ contract WalletRegistryTest is Test {
         registry.registerWallet(WalletRegistry.Category.Test, "User Wallet");
         vm.prank(secondUser);
         registry.registerWallet(WalletRegistry.Category.DeFi, "Second Wallet");
-        WalletRegistry.WalletInfo memory userInfo = registry.getWalletInfo(
-            user
-        );
-        WalletRegistry.WalletInfo memory secondUserInfo = registry
-            .getWalletInfo(secondUser);
-        assertEq(
-            uint256(userInfo.category),
-            uint256(WalletRegistry.Category.Test)
-        );
+        WalletRegistry.WalletInfo memory userInfo = registry.getWalletInfo(user);
+        WalletRegistry.WalletInfo memory secondUserInfo = registry.getWalletInfo(secondUser);
+        assertEq(uint256(userInfo.category), uint256(WalletRegistry.Category.Test));
         assertEq(userInfo.label, "User Wallet");
         assertTrue(userInfo.exists);
-        assertEq(
-            uint256(secondUserInfo.category),
-            uint256(WalletRegistry.Category.DeFi)
-        );
+        assertEq(uint256(secondUserInfo.category), uint256(WalletRegistry.Category.DeFi));
         assertEq(secondUserInfo.label, "Second Wallet");
         assertTrue(secondUserInfo.exists);
     }
@@ -126,10 +105,7 @@ contract WalletRegistryTest is Test {
     }
 
     function test_IsCategoryReturnsFalseForUnregisteredWallet() public view {
-        bool result = registry.isCategory(
-            unregisteredUser,
-            WalletRegistry.Category.None
-        );
+        bool result = registry.isCategory(unregisteredUser, WalletRegistry.Category.None);
         assertFalse(result);
     }
 }
