@@ -1,66 +1,83 @@
-## Foundry
+POKKET
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Protocol for On-chain Kategory-based Key Eligibility Tracking
 
-Foundry consists of:
+A lightweight on-chain wallet categorization layer for composable identity and authorization systems.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+POKKET is a self-sovereign wallet registry that provides an on-chain categorization layer for Ethereum addresses. It answers a single question: "What kind of wallet is this?"
 
-## Documentation
+It allows wallet owners to self-register Ethereum addresses with a category and human-readable label, creating a lightweight routing layer that other smart contracts can query without storing or exposing personally identifiable information (PII).
 
-https://book.getfoundry.sh/
+Why POKKET?
 
-## Usage
+Blockchain applications often need to distinguish between different types of wallets without storing personal information.
 
-### Build
+Rather than embedding wallet categorization logic into every application, POKKET provides a reusable registry that any smart contract can query.
 
-```shell
-$ forge build
-```
+This keeps identity, wallet categorization, and authorization as independent, composable concerns.
 
-### Test
+Design Philosophy
 
-```shell
-$ forge test
-```
+POKKET follows the principle of single responsibility.
 
-### Format
+Rather than combining identity, wallet ownership, and authorization into one contract, POKKET focuses solely on wallet categorization.
 
-```shell
-$ forge fmt
-```
+Other contracts can compose this information without inheriting unnecessary complexity.
 
-### Gas Snapshots
+Where POKKET Fits
+text
+┌──────────────────┐
+│   CivicPass      │
+│   Who is this?   │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│   POKKET         │
+│   Which wallet   │
+│   is this?       │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│   MINE           │
+│   Should this    │
+│   wallet         │
+│   participate?   │
+└──────────────────┘
+Wallet Categories
+Category	Use Case
+None	Default / unregistered
+Voting	Governance and election eligibility
+NFT	Digital asset and collectible wallets
+DeFi	Decentralized finance participation
+RealEstate	Real world asset and property tokenization
+Test	Development and testing purposes
+Public Interface
 
-```shell
-$ forge snapshot
-```
+src/WalletRegistry.sol
 
-### Anvil
+Function	Description
+registerWallet	Register caller's wallet with a category and label
+getWalletInfo	Retrieve full wallet info for any address
+isCategory	Check if a wallet belongs to a specific category
+Design Decisions
+Registration is permanent and cannot be silently overwritten
+Future wallet changes will be handled through a dedicated updateWallet function
+isCategory() verifies wallet existence before comparing categories, preventing false positives from Solidity's default mapping values
+Registration emits WalletRegistered events for off-chain indexing and observability
+Testing
 
-```shell
-$ anvil
-```
+Built with Foundry using a comprehensive unit test suite covering registration, retrieval, wallet isolation, authorization checks, and edge cases.
 
-### Deploy
+✓ 9 unit tests
+✓ 9 passing
+bash
+forge test -v
+Deployment
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+Sepolia testnet — address coming soon.
 
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+Related Projects
+CivicPass — Privacy-preserving credential verification
+MINE — Decentralized authorization layer
